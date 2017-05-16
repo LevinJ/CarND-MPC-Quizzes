@@ -75,7 +75,7 @@ class FG_eval {
 
     // Minimize the value gap between sequential actuations.
     for (int i = 0; i < N - 2; i++) {
-      fg[0] += CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 500* CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
       fg[0] += CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
@@ -301,7 +301,7 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
 
 int main() {
   MPC mpc;
-  int iters = 50;
+  int iters = 60;
 
   Eigen::VectorXd ptsx(2);
   Eigen::VectorXd ptsy(2);
