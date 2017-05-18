@@ -349,6 +349,7 @@ int main() {
   std::vector<double> delta_vals = {};
   std::vector<double> a_vals = {};
 
+  cout <<"initial status: " << state <<endl;
   for (size_t i = 0; i < iters; i++) {
     std::cout << "Iteration " << i << std::endl;
     vector<double> mpc_x;
