@@ -75,7 +75,7 @@ class FG_eval {
 
     // Minimize the value gap between sequential actuations.
     for (int i = 0; i < N - 2; i++) {
-      fg[0] += 500* CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] +=  CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
       fg[0] += CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
@@ -356,9 +356,6 @@ int main() {
 
     auto vars = mpc.Solve(state, coeffs,mpc_x,mpc_y);
 
-    plt::plot(next_x, next_y);
-    plt::plot(mpc_x, mpc_y, "ro");
-    plt::show();
 
     x_vals.push_back(vars[0]);
     y_vals.push_back(vars[1]);
@@ -372,6 +369,13 @@ int main() {
 
     state << vars[0], vars[1], vars[2], vars[3], vars[4], vars[5];
     std::cout << state << std::endl;
+
+    plt::plot(next_x, next_y);
+	plt::plot(mpc_x, mpc_y, "ro");
+	plt::show();
+
+	std::cout << "Iteration " << i << "end"<<std::endl;
+
 
 
   }
