@@ -75,7 +75,7 @@ class FG_eval {
 
     // Minimize the value gap between sequential actuations.
     for (int i = 0; i < N - 2; i++) {
-      fg[0] += 500* CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
       fg[0] += CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
@@ -254,6 +254,8 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
   bool ok = true;
   ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
 
+  cout <<"solver ok, "<< ok<<" res, "<<solution.status <<endl;
+
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
   return {solution.x[x_start + 1],   solution.x[y_start + 1],
@@ -335,6 +337,8 @@ int main() {
   std::vector<double> epsi_vals = {state[5]};
   std::vector<double> delta_vals = {};
   std::vector<double> a_vals = {};
+
+  std::cout << state << std::endl;
 
   for (size_t i = 0; i < iters; i++) {
     std::cout << "Iteration " << i << std::endl;
