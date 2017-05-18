@@ -307,10 +307,19 @@ int main() {
   MPC mpc;
   int iters = 60;
 
-  Eigen::VectorXd ptsx(2);
-  Eigen::VectorXd ptsy(2);
-  ptsx << -100, 100;
-  ptsy << -1, -1;
+  vector<double> next_x={-100, 100};
+  vector<double> next_y={-1, -1};
+  Eigen::VectorXd ptsx;
+  Eigen::VectorXd ptsy;
+  int next_xy_size = next_x.size();
+  ptsx.resize(next_xy_size);
+  ptsy.resize(next_xy_size);
+  for (int i=0; i< next_xy_size; i++){
+	  ptsx[i] = next_x[i];
+	  ptsy[i] = next_y[i];
+  }
+//  ptsx << -100, 100;
+//  ptsy << -1, -1;
 
   // The polynomial is fitted to a straight line so a polynomial with
   // order 1 is sufficient.
@@ -344,8 +353,7 @@ int main() {
     std::cout << "Iteration " << i << std::endl;
     vector<double> mpc_x;
     vector<double> mpc_y;
-    vector<double> next_x={-100, 100};
-    vector<double> next_y={-1, -1};
+
     auto vars = mpc.Solve(state, coeffs,mpc_x,mpc_y);
 
     plt::plot(next_x, next_y);
