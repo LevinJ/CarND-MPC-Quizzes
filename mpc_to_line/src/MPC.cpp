@@ -150,7 +150,7 @@ class FG_eval {
 MPC::MPC() {}
 MPC::~MPC() {}
 
-vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
+vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs,vector<double>& mpc_x, vector<double>& mpc_y) {
   size_t i;
   typedef CPPAD_TESTVECTOR(double) Dvector;
 
@@ -256,6 +256,10 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
 
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
+  for (int i = 0; i < N; i++){
+	mpc_x.push_back(solution.x[x_start + i]);
+	mpc_y.push_back(solution.x[y_start + i]);
+  }
   return {solution.x[x_start + 1],   solution.x[y_start + 1],
           solution.x[psi_start + 1], solution.x[v_start + 1],
           solution.x[cte_start + 1], solution.x[epsi_start + 1],
@@ -338,8 +342,15 @@ int main() {
 
   for (size_t i = 0; i < iters; i++) {
     std::cout << "Iteration " << i << std::endl;
+    vector<double> mpc_x;
+    vector<double> mpc_y;
+    vector<double> next_x={-100, 100};
+    vector<double> next_y={-1, -1};
+    auto vars = mpc.Solve(state, coeffs,mpc_x,mpc_y);
 
-    auto vars = mpc.Solve(state, coeffs);
+    plt::plot(next_x, next_y);
+    plt::plot(mpc_x, mpc_y, "ro");
+    plt::show();
 
     x_vals.push_back(vars[0]);
     y_vals.push_back(vars[1]);
@@ -353,6 +364,8 @@ int main() {
 
     state << vars[0], vars[1], vars[2], vars[3], vars[4], vars[5];
     std::cout << state << std::endl;
+
+
   }
 
   // Plot values
