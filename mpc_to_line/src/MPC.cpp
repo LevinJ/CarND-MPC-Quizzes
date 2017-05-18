@@ -356,7 +356,12 @@ int main() {
     a_vals.push_back(vars[7]);
 
     state << vars[0], vars[1], vars[2], vars[3], vars[4], vars[5];
-    std::cout << state << std::endl;
+
+    Eigen::VectorXd new_state(8);
+
+    new_state << vars[0], vars[1], vars[2], vars[3], vars[4], vars[5], vars[6], vars[7];
+    std::cout<<new_state<<endl;
+    std::cout<<"end"<<endl;
   }
 
   // Plot values
