@@ -238,7 +238,7 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs,vector<doub
   options += "Integer print_level  0\n";
   options += "Sparse  true        forward\n";
   options += "Sparse  true        reverse\n";
-  options += "Numeric max_cpu_time          0.05\n";
+  options += "Numeric max_cpu_time          0.5\n";
 
   // place to return solution
   CppAD::ipopt::solve_result<Dvector> solution;
@@ -259,6 +259,10 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs,vector<doub
   for (int i = 0; i < N; i++){
 	mpc_x.push_back(solution.x[x_start + i]);
 	mpc_y.push_back(solution.x[y_start + i]);
+  }
+  if(!ok){
+	  std::cout << "Fatal error: failed to find optimal parameters!!!" << std::endl;
+	  exit(EXIT_FAILURE);
   }
   return {solution.x[x_start + 1],   solution.x[y_start + 1],
           solution.x[psi_start + 1], solution.x[v_start + 1],
@@ -371,11 +375,11 @@ int main() {
     state << vars[0], vars[1], vars[2], vars[3], vars[4], vars[5];
     std::cout << state << std::endl;
 
-    plt::plot(next_x, next_y);
-	plt::plot(mpc_x, mpc_y, "ro");
-	plt::show();
+//    plt::plot(next_x, next_y);
+//	plt::plot(mpc_x, mpc_y, "ro");
+//	plt::show();
 
-	std::cout << "Iteration " << i << "end"<<std::endl;
+	std::cout << "Iteration " << i << " end"<<std::endl;
 
 
 
