@@ -118,8 +118,8 @@ public:
 			AD<double> delta0 = vars[delta_start + i];
 			AD<double> a0 = vars[a_start + i];
 
-			AD<double> f0 = coeffs[0] + coeffs[1] * x0;
-			AD<double> psides0 = CppAD::atan(coeffs[1]);
+			AD<double> f0 = coeffs[0] + coeffs[1] * x0 + coeffs[2] *CppAD::pow(x0,2) + coeffs[3] *CppAD::pow(x0,3);
+			AD<double> psides0 = CppAD::atan(coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3]*CppAD::pow(x0,2));
 
 			// Here's `x` to get you started.
 			// The idea here is to constraint this value to be 0.
@@ -338,8 +338,8 @@ int main() {
 	MPC mpc;
 	int iters = 60;
 
-	vector<double> next_x={-32.16173,-107.7717};
-	vector<double> next_y={113.361,50.57938};
+	vector<double> next_x={-32.16173,-43.49173,-61.09,-78.29172,-93.05002,-107.7717};
+	vector<double> next_y={113.361,105.941,92.88499,78.73102,65.34102,50.57938};
 
 
 
@@ -347,7 +347,7 @@ int main() {
 	double x = -40.62;
 	double y = 108.73;
 	double psi = 3.733651;
-	double v = 3.504024;
+	double v = 10;
 
 	//transform to vehicle coordinate
 	transform_map_coord(next_x,next_y, x, y, psi);
@@ -368,7 +368,7 @@ int main() {
 
 	// The polynomial is fitted to a straight line so a polynomial with
 	// order 1 is sufficient.
-	auto coeffs = polyfit(ptsx, ptsy, 1);
+	auto coeffs = polyfit(ptsx, ptsy, 3);
 
 	//
 	// The cross track error is calculated by evaluating at polynomial at x, f(x)
@@ -376,7 +376,7 @@ int main() {
 	double cte = polyeval(coeffs, 0) - y;
 	// Due to the sign starting at 0, the orientation error is -f'(x).
 	// derivative of coeffs[0] + coeffs[1] * x -> coeffs[1]
-	double epsi = -atan(coeffs[1]);
+	double epsi = -atan(coeffs[1] + (2 * coeffs[2] * x) + (3 * coeffs[3]* (x*x)));
 
 	Eigen::VectorXd state(6);
 	state << x, y, psi, v, cte, epsi;
